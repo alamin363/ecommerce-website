@@ -4,17 +4,18 @@ const {
   createProduct,
   updateProduct,
   deleteProduct,
-  getIdByProduct
+  getIdByProduct,
 } = require("../controllers/productContollers");
+const { isAuthenticateUser, authorizeRoles } = require("../middleware/auth");
 
 const router = express.Router();
 router.route("/product").get(getAllProducts);
-router.route("/product/new").post(createProduct);
+router.route("/product/new").post(isAuthenticateUser, createProduct);
 // URL same thakle aivabe aksate update and delete method use kora jai;
 router
   .route("/product/:id")
-  .put(updateProduct)
-  .delete(deleteProduct)
+  .put(isAuthenticateUser, authorizeRoles("admin"), updateProduct)
+  .delete(isAuthenticateUser, authorizeRoles("admin"), deleteProduct)
   .get(getIdByProduct);
 
 module.exports = router;
